@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.portal.dynamic.mapper.DynamicMapper">
+
+    <sql id="selectColumns">
+        SELECT
+            a.id,
+            a.name,
+            a.num,
+            a.content,
+            a.status,
+            a.person,
+            a.url,
+            a.imgUrl,
+            a.type,
+            a.wys,
+a.updateDate as updateTime,
+a.person as createBy
+        FROM dynamic a
+    </sql>
+
+
+
+
+    <!-- 根据编号获得用户 -->
+    <select id="get" resultType="com.portal.dynamic.entity.Dynamic">
+        <include refid="selectColumns"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <!-- 查询广告内容 -->
+    <select id="getDynamic" resultType="com.portal.dynamic.entity.Dynamic">
+        <include refid="selectColumns"/>
+        where a.delFlag !=1 and a.status !=0 ORDER BY a.num
+    </select>
+
+    <!-- 查询所有广告内容 -->
+    <select id="getList" resultType="com.portal.dynamic.entity.Dynamic">
+        <include refid="selectColumns"/>
+        where a.delFlag !=1
+        <if test="name!=null"> and a.name like concat(concat('%',#{name}),'%')</if>
+        ORDER BY a.num
+    </select>
+    <select id="getUp" resultType="com.portal.dynamic.entity.Dynamic">
+        SELECT t.* FROM dynamic t,dynamic d WHERE  t.num <![CDATA[ < ]]> d.num and d.id=#{id} and t.delFlag !=1  ORDER BY t.num DESC LIMIT 1
+    </select>
+
+    <select id="getDown" resultType="com.portal.dynamic.entity.Dynamic">
+        SELECT t.* from dynamic t,dynamic d WHERE  t.num <![CDATA[ > ]]> d.num and d.id=#{id} and t.delFlag !=1  ORDER BY t.num LIMIT 1
+    </select>
+
+    <select id="getFirst" resultType="com.portal.dynamic.entity.Dynamic">
+        SELECT t.* from dynamic t ORDER BY t.num LIMIT 1
+    </select>
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE dynamic
+        SET
+        name = #{name},
+        num = #{num},
+        content = #{content},
+        status = #{status},
+        person = #{person},
+        url = #{url},
+        imgUrl = #{imgUrl},
+        wys = #{wys},
+        updateDate = #{updateDate},
+        type=#{type}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="add">
+        INSERT INTO dynamic (name,
+        num,
+        content,
+        status,
+        person,
+        url,
+        imgUrl,
+        delFlag,
+        updateDate,
+        type)
+        SELECT   #{name},
+        max(num)+1,
+        #{content},
+        #{status},
+        #{person},
+        #{url},
+        #{imgUrl},
+        0,
+        #{updateDate},#{type}  from dynamic
+    </insert>
+
+
+    <delete id="delete">
+        UPDATE dynamic SET delFlag = 1 WHERE id = #{id}
+    </delete>
+
+
+</mapper>

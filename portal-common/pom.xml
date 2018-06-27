@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>portal-parent</artifactId>
+        <groupId>com.portal</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>portal-common</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>portal-common-utils</module>
+        <module>portal-common-upload</module>
+        <module>portal-common-redis</module>
+        <module>portal-common-service</module>
+        <module>portal-common-api</module>
+        <module>portal-common-web</module>
+        <module>portal-common-security</module>
+    </modules>
+
+</project>

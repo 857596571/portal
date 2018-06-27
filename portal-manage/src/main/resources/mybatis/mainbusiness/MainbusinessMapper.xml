@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.portal.mainbusiness.mapper.MainbusinessMapper">
+
+    <sql id="selectColumns">
+        SELECT
+            a.id,
+            a.pid,
+            a.name,
+            a.uname,
+            a.num,
+            a.desce,
+            a.status,
+            a.imgUrl,
+            a.url
+        FROM mainbusiness a
+    </sql>
+    
+    
+    
+
+    <!-- 根据编号获得用户 -->
+    <select id="get" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+        <include refid="selectColumns"/>
+        WHERE a.id = #{id} 
+    </select>
+
+    <!-- 查询广告内容 -->
+    <select id="getMainbusiness" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+        <include refid="selectColumns"/>
+        WHERE a.pid = 0 and a.delFlag !=1 and a.status !=0 ORDER BY a.num
+    </select>
+    
+    <!-- 根据ID查询子广告内容 -->
+    <select id="getMainbusinessChild" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+        <include refid="selectColumns"/>
+        WHERE a.pid = #{id} and a.delFlag !=1 ORDER BY a.num
+    </select>
+
+    <!-- 查询所有广告内容 -->
+    <select id="getList" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+        <include refid="selectColumns"/>
+        where a.delFlag !=1 and a.pid = 0 
+        <if test="name!=null"> and a.name like concat(concat('%',#{name}),'%')</if>
+        ORDER BY a.num
+    </select>
+	
+	<select id="getUp" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+		SELECT t.* FROM mainbusiness t,mainbusiness d WHERE t.pid = d.pid and t.num <![CDATA[ < ]]> d.num and d.id=#{id} and t.delFlag !=1  ORDER BY t.num DESC LIMIT 1
+	</select>
+
+	<select id="getDown" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+		SELECT t.* from mainbusiness t,mainbusiness d WHERE t.pid = d.pid and t.num <![CDATA[ > ]]> d.num and d.id=#{id} and t.delFlag !=1  ORDER BY t.num LIMIT 1
+	</select>
+
+    <select id="getFirst" resultType="com.portal.mainbusiness.entity.Mainbusiness">
+        SELECT t.* from mainbusiness t,mainbusiness d WHERE t.pid = d.pid and d.id=#{id} ORDER BY t.num LIMIT 1
+    </select>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE mainbusiness
+        SET
+            name = #{name},
+            pid = #{pid},
+            uname = #{uname},
+            num = #{num},
+            desce = #{desce},
+            status = #{status},
+            imgUrl = #{imgUrl},
+            url = #{url},
+            updateDate = #{updateDate}
+        WHERE id = #{id}
+    </update>
+    
+    <insert id="add">  
+        INSERT INTO mainbusiness (name, uname, 
+                                   num,
+                                   pid,  
+                                   desce,  
+                                   status,
+                                   imgUrl,
+                                   delFlag,
+                                   url,
+                                   updateDate)  
+              SELECT  #{name},
+              #{uname},  
+                        max(num)+1,
+                        #{pid},
+                        #{desce},   
+                        #{status},  
+                        #{imgUrl},  
+                        0,
+                        #{url},
+                        #{updateDate}  from mainbusiness 
+                        
+         
+	</insert> 
+	
+	
+	<delete id="delete">  
+	        UPDATE mainbusiness SET delFlag = 1 WHERE id = #{id}
+	</delete> 
+
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.portal.person.mapper.PersonMapper">
+
+    <sql id="selectColumns">
+        SELECT
+            a.id,
+            a.name,
+            a.num,
+            a.detail,
+            a.desce,
+            a.post,
+            a.status,
+            a.url,
+            a.imgUrl
+        FROM person a
+    </sql>
+    
+    
+    
+
+    <!-- 根据编号获得用户 -->
+    <select id="get" resultType="com.portal.person.entity.Person">
+        <include refid="selectColumns"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <!-- 查询广告内容 -->
+    <select id="getPerson" resultType="com.portal.person.entity.Person">
+        <include refid="selectColumns"/>
+        where a.delFlag !=1 and a.status !=0 ORDER BY a.num
+    </select>
+
+    <!-- 查询所有广告内容 -->
+    <select id="getList" resultType="com.portal.person.entity.Person">
+        <include refid="selectColumns"/>
+        where a.delFlag !=1
+        <if test="name!=null"> and a.name like concat(concat('%',#{name}),'%')</if>
+        ORDER BY a.num
+    </select>
+	<select id="getUp" resultType="com.portal.person.entity.Person">
+		SELECT t.* FROM person t,person d WHERE  t.num <![CDATA[ < ]]> d.num and d.id=#{id} and t.delFlag !=1  ORDER BY t.num DESC LIMIT 1
+	</select>
+
+	<select id="getDown" resultType="com.portal.person.entity.Person">
+		SELECT t.* from person t,person d WHERE  t.num <![CDATA[ > ]]> d.num and d.id=#{id} and t.delFlag !=1  ORDER BY t.num LIMIT 1
+	</select>
+
+    <select id="getFirst" resultType="com.portal.person.entity.Person">
+        SELECT t.* from person t ORDER BY t.num LIMIT 1
+    </select>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE person
+        SET
+            name = #{name},
+            detail = #{detail},
+            desce = #{desce},
+            num = #{num},
+            post = #{post},
+            status = #{status},
+            url = #{url},
+            imgUrl = #{imgUrl}
+        WHERE id = #{id}
+    </update>
+    
+    <insert id="add">  
+        INSERT INTO person (name,  
+                                   num,  
+                                   post,
+                                   detail,
+                                   desce,  
+                                   status,
+                                   url,  
+                                   imgUrl,
+                                   delFlag,
+                                   updateDate)  
+              SELECT   #{name},  
+                        max(num)+1,
+                        #{post}, 
+                        #{detail},
+                        #{desce},  
+                        #{status},  
+                        #{url},  
+                        #{imgUrl},
+                        0,
+                        #{updateDate} from person  
+	</insert> 
+	
+	
+	<delete id="delete">   
+	        UPDATE person SET delFlag = 1 WHERE id = #{id}
+	</delete> 
+
+
+</mapper>
