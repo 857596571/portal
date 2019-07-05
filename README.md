@@ -1,7 +1,5 @@
-portal管理系统
+portal绠＄悊绯荤粺
 
-前端界面：react antd redux 
+鍓嶇鐣岄潰锛歳eact antd redux 
 
-后端架构：spring boot
-
-手动阀手动阀
+鍚庣鏋舵瀯锛歴pring boot
